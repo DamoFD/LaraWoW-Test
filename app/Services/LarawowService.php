@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use App\Types\AccessToken;
+use App\Types\User;
 
 class LarawowService
 {
@@ -10,6 +12,11 @@ class LarawowService
     * OAuth Token URL
     */
     protected string $tokenURL = "https://oauth.battle.net/token";
+
+    /**
+    * Base API URL
+    */
+    protected string $baseApi = "https://oauth.battle.net/";
 
     /**
      * The required data for the token request.
@@ -35,7 +42,7 @@ class LarawowService
     /**
      * returns the access token using the returned code.
      */
-    public function getAccessTokenFromCode(string $code)
+    public function getAccessTokenFromCode(string $code): AccessToken
     {
         $this->tokenData['code'] = $code;
 
@@ -48,8 +55,18 @@ class LarawowService
             'redirect_uri' => $this->tokenData['redirect_uri'],
         ]);
 
-        dd($response->body());
-
         return new AccessToken(json_decode($response->body()));
+    }
+
+    /**
+    * returns the user's account
+    */
+    public function getCurrentAccount(AccessToken $accessToken): User
+    {
+        $response = Http::withToken($accessToken->access_token)->get($this->baseApi . 'userinfo');
+
+        $response->throw();
+
+        return new User(json_decode($response->body()));
     }
 }

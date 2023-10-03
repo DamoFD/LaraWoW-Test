@@ -44,4 +44,15 @@ return [
     */
 
     'route_prefix' => env('LARAWOW_PREFIX', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    |
+    | This is the Scopes required for your LaraWoW application.
+    |
+    */
+
+    'scopes' => env('LARAWOW_SCOPES', null),
 ];

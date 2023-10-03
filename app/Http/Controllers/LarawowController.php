@@ -19,7 +19,7 @@ class LarawowController extends Controller
             'client_id' => config('larawow.client_id'),
             'redirect_uri' => config('larawow.redirect_uri'),
             'response_type' => 'code',
-            'scope' => '',
+            'scope' => config('larawow.scopes'),
             'state' => $state
         ]);
 
@@ -39,6 +39,12 @@ class LarawowController extends Controller
             $accessToken = (new LarawowService())->getAccessTokenFromCode($request->get('code'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Invalid code', 'message' => $e->getMessage()], 400);
+        }
+
+        try {
+            $user = (new LarawowService())->getCurrentAccount($accessToken);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalied Token', 'message' => $e->getMessage()], 400);
         }
     }
 }
