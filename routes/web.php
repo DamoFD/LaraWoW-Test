@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LarawowController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', [LarawowController::class, 'redirect'])->name('login');
+
+Route::get('/LaraWoW/callback', [LarawowController::class, 'get'])
+    ->name('callback');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -28,4 +34,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+//require __DIR__.'/auth.php';

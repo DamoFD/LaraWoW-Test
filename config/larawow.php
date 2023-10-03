@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'redirect_uri' => env('LARAWOW_REDIRECT_URI', null),
+    'redirect_uri' => env('APP_URL', null) . '/' . env('LARAWOW_PREFIX', null) . '/callback',
 
     /*
     |--------------------------------------------------------------------------
