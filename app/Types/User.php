@@ -11,7 +11,7 @@ class User
     public int $id;
 
     // User battletag
-    public int $battletag;
+    public string $battletag;
 
     // User's Access Token
     public ?AccessToken $access_token;
