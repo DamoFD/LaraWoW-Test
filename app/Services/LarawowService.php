@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\RedirectResponse;
+use Exception;
 use App\Types\AccessToken;
-use App\Types\User;
+use App\Types\User as UserType;
+use App\Models\User;
 
 class LarawowService
 {
@@ -61,12 +64,29 @@ class LarawowService
     /**
     * returns the user's account
     */
-    public function getCurrentAccount(AccessToken $accessToken): User
+    public function getCurrentAccount(AccessToken $accessToken): UserType
     {
         $response = Http::withToken($accessToken->access_token)->get($this->baseApi . 'userinfo');
 
         $response->throw();
 
-        return new User(json_decode($response->body()));
+        return new UserType(json_decode($response->body()));
+    }
+
+    /**
+    * Create or update the user in the db
+    */
+    public function updateOrCreateUser(UserType $user): User
+    {
+        if (!$user->getAccessToken()) {
+            throw new Exception('User access token is missing.');
+        }
+
+        return User::updateOrCreate(
+            [
+                'id' => $user->id,
+            ],
+            $user->toArray(),
+        );
     }
 }

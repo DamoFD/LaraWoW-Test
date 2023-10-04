@@ -30,4 +30,28 @@ class AccessToken
 
         return $this;
     }
+
+    // return true if token is expired
+    public function isExpired(): bool
+    {
+        return $this->expires_at->isPast();
+    }
+
+    // return true if token if not expired
+    public function isValid(): bool
+    {
+        return !$this->isExpired();
+    }
+
+    // Convert Access Token to array
+    public function toArray(): array
+    {
+        return [
+            'access_token' => $this->access_token,
+            'token_type' => $this->token_type,
+            'expires_in' => $this->expires_in,
+            'expires_at' => $this->expires_at,
+            'scope' => $this->scope,
+        ];
+    }
 }

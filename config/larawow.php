@@ -55,4 +55,49 @@ return [
     */
 
     'scopes' => env('LARAWOW_SCOPES', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Error Messages
+    |--------------------------------------------------------------------------
+    |
+    | These are the error messages that will be displayed to the user if there
+    | is an error.
+    |
+    */
+
+    'error_messages' => [
+        'missing_code' => [
+            'message' => 'The authorization code is missing.',
+            'redirect' => '/'
+        ],
+        'invalid_code' => [
+            'message' => 'The authorization code is invalid.',
+            'redirect' => '/'
+        ],
+        'authorization_failed' => [
+            'message' => 'The authorization failed.',
+            'redirect' => '/'
+        ],
+        'missing_email' => [
+            'message' => 'Couldn\'t get your e-mail address.',
+            'redirect' => '/'
+        ],
+        'invalid_user' => [
+            'message' => 'The user ID doesn\'t match the logged-in user.',
+            'redirect' => '/'
+        ],
+        'database_error' => [
+            'message' => 'There was an error with the database. Please try again later.',
+            'redirect' => '/'
+        ],
+        'missing_access_token' => [
+            'message' => 'The access token is missing.',
+            'redirect' => '/'
+        ],
+        'revoke_token_failed' => [
+            'message' => 'An error occurred while trying to revoke your access token.',
+            'redirect' => '/'
+        ],
+    ],
 ];
