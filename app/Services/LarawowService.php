@@ -9,6 +9,7 @@ use App\Types\AccessToken;
 use App\Types\User as UserType;
 use App\Models\User;
 use App\Types\WowAccount;
+use App\Types\Mount;
 use App\Models\Account;
 use App\Models\Character;
 
@@ -137,7 +138,7 @@ class LarawowService
     * Fetch the user's WoW accounts
     * @return WowAccounts[]
     */
-    public function getUserWowAccounts(User $user): array
+    public function getCurrentAccounts(User $user): array
     {
         $url = 'https://us.api.blizzard.com/profile/user/wow?namespace=profile-us&locale=en_US';
         $WowAccounts = [];
@@ -153,5 +154,58 @@ class LarawowService
         }
 
         return $WowAccounts;
+    }
+
+    public function getProtectedCharacter(User $user, Character $character)
+    {
+        $url = $character->protected_character_link;
+        $response = Http::withToken($user->accessToken->access_token)->get($url);
+        // Returned a 404
+        dd(json_decode($response->body()));
+    }
+
+    public function getCurrentCollectionsIndex(User $user)
+    {
+        $url = 'https://us.api.blizzard.com/profile/user/wow/collections?namespace=profile-us&locale=en_US';
+        $response = Http::withToken($user->accessToken->access_token)->get($url);
+        // just returns index of endpoints
+        dd(json_decode($response->body()));
+    }
+
+    public function getCurrentMounts(User $user)
+    {
+        $url = 'https://us.api.blizzard.com/profile/user/wow/collections/mounts?namespace=profile-us&locale=en_US';
+        $response = Http::withToken($user->accessToken->access_token)->get($url);
+        // just returns index of endpoints
+        dd(json_decode($response->body()));
+    }
+
+    public function getAllMounts(User $user): array
+    {
+        $url = 'https://us.api.blizzard.com/data/wow/mount/index?namespace=static-us&locale=en_US';
+        $mounts = [];
+        $response = Http::withToken($user->accessToken->access_token)->get($url);
+
+        $data = json_decode($response->body());
+
+        foreach ($data->mounts as $mount) {
+            $mounts[] = new Mount($mount);
+        }
+
+        return $mounts;
+    }
+
+    public function createAllMounts(array $mounts)
+    {
+        foreach ($mounts as $mount) {
+            \App\Models\Mount::updateOrCreate(
+                [
+                    'id' => $mount->id
+                ],
+                [
+                    'name' => $mount->name
+                ],
+            );
+        }
     }
 }

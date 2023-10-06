@@ -15,13 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [LarawowController::class, 'home'])->name('home');
 
 Route::get('/login', [LarawowController::class, 'redirect'])->name('login');
 
-Route::post('/user/wow/refresh', [LarawowController::class, 'WoWUserRefresh'])->name('wow.user.refresh');
+Route::post('/user/accounts', [LarawowController::class, 'getAccounts'])->name('getAccounts');
+
+Route::post('/user/protected-character/{character}', [LarawowController::class, 'getProtectedCharacter'])->name('getProtectedCharacter');
+
+Route::post('/user/collection/index', [LarawowController::class, 'getCurrentCollectionsIndex'])->name('getCurrentCollectionsIndex');
+
+Route::post('/user/collection/mounts', [LarawowController::class, 'getCurrentMounts'])->name('getCurrentMounts');
+
+Route::post('/mounts', [LarawowController::class, 'getAllMounts'])->name('getAllMounts');
 
 Route::get('/LaraWoW/callback', [LarawowController::class, 'get'])
     ->name('callback');

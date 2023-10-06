@@ -40,7 +40,7 @@
 
                 @if (auth()->user())
                     <p>Welcome {{ auth()->user()->battletag }}</p>
-                    <form method="post" action="{{ route('wow.user.refresh') }}">
+                    <form method="post" action="{{ route('getAccounts') }}">
                         @csrf
                         <button type="submit">Refresh WoW characters</button>
                     </form>
@@ -59,6 +59,7 @@
                                 <th>Race</th>
                                 <th>Gender</th>
                                 <th>Faction</th>
+                                <th>Get Protected</th>
                             </tr>
                             @foreach ($account->characters as $character)
                                 <tr>
@@ -72,12 +73,35 @@
                                     <td>{{ $character->getRace() }}</td>
                                     <td>{{ $character->getGender() }}</td>
                                     <td>{{ $character->getFaction() }}</td>
+                                    <td>
+                                        <form method="post" action="{{ route('getProtectedCharacter', $character->id) }}">
+                                            @csrf
+                                            <button type="submit">Get Protected Character</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </table>
                     @endforeach
 
+                    <form method="post" action="{{ route('getCurrentCollectionsIndex') }}">
+                        @csrf
+                        <button type="submit">Get Current Index Collection</button>
+                    </form>
+                    <form method="post" action="{{ route('getCurrentMounts') }}">
+                        @csrf
+                        <button type="submit">Get Current Mounts</button>
+                    </form>
+                    <form method="post" action="{{ route('getAllMounts') }}">
+                        @csrf
+                        <button type="submit">Get All Mounts</button>
+                    </form>
+
                 @endif
+
+                @foreach($mounts as $mount)
+                    <p>{{ $mount->name }}</p>
+                @endforeach
 
                 <div class="mt-16">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">

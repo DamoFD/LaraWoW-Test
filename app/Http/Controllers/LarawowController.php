@@ -3,13 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Services\LarawowService;
+use App\Models\Character;
 
 class LarawowController extends Controller
 {
+    public function home()
+    {
+        // cuz I wanna destroy my server
+        // nvm, still loaded instantly lol
+        $mounts = \App\Models\Mount::all();
+
+        return view('welcome', compact('mounts'));
+    }
+
     // Redirect the user to Battle.net and receive the code.
     public function redirect(): RedirectResponse
     {
@@ -100,11 +111,11 @@ class LarawowController extends Controller
         }
     }
 
-    // Refresh the User's WoW characters
-    public function WoWUserRefresh(): RedirectResponse | JsonResponse
+    // Refresh the User's WoW accounts
+    public function getAccounts(): RedirectResponse | JsonResponse
     {
         $user = auth()->user();
-        $accounts = (new LarawowService())->getUserWowAccounts($user);
+        $accounts = (new LarawowService())->getCurrentAccounts($user);
 
         // Create or update user in db
         // Initialize DB transaction in case something goes wrong
@@ -119,6 +130,39 @@ class LarawowController extends Controller
         // Commit the Database Transaction
         DB::commit();
 
+        return redirect()->back();
+    }
+
+    public function getProtectedCharacter(Character $character)
+    {
+        $user = auth()->user();
+        $character = (new LarawowService())->getProtectedCharacter($user, $character);
+    }
+
+    public function getCurrentCollectionsIndex()
+    {
+        $user = auth()->user();
+
+        $collections = (new LarawowService())->getCurrentCollectionsIndex($user);
+    }
+
+    public function getCurrentMounts()
+    {
+        $user = auth()->user();
+
+        $mounts = (new LarawowService())->getCurrentMounts($user);
+    }
+
+    public function getAllMounts()
+    {
+        $user = auth()->user();
+        $mounts = (new LarawowService())->getAllMounts($user);
+        $this->storeAllMounts($mounts);
+    }
+
+    private function storeAllMounts(array $mounts): RedirectResponse
+    {
+        $mounts = (new LarawowService())->createAllMounts($mounts);
         return redirect()->back();
     }
 }
