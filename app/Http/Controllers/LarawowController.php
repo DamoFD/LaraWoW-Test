@@ -99,4 +99,11 @@ class LarawowController extends Controller
             ]);
         }
     }
+
+    // Refresh the User's WoW characters
+    public function WoWUserRefresh()
+    {
+        $user = auth()->user();
+        $wowCharacters = (new LarawowService())->getUserWowCharacters($user);
+    }
 }

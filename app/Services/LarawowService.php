@@ -8,6 +8,7 @@ use Exception;
 use App\Types\AccessToken;
 use App\Types\User as UserType;
 use App\Models\User;
+use App\Types\WowAccount;
 
 class LarawowService
 {
@@ -88,5 +89,28 @@ class LarawowService
             ],
             $user->toArray(),
         );
+    }
+
+    /**
+    * Fetch the user's WoW characters
+    */
+    public function getUserWowCharacters(User $user)
+    {
+        $url = 'https://us.api.blizzard.com/profile/user/wow?namespace=profile-us&locale=en_US';
+        $WowAccounts = [];
+
+        $response = Http::withToken($user->accessToken->access_token)->get($url);
+
+        $response->throw();
+
+        $data = json_decode($response->body());
+
+        foreach ($data->wow_accounts as $account) {
+            $WowAccounts[] = new WowAccount($account);
+        }
+
+        dd($WowAccounts);
+
+        return new UserType(json_decode($response->body()));
     }
 }

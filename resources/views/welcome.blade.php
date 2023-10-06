@@ -40,6 +40,10 @@
 
                 @if (auth()->user())
                     <p>Welcome {{ auth()->user()->battletag }}</p>
+                    <form method="post" action="{{ route('wow.user.refresh') }}">
+                        @csrf
+                        <button type="submit">Refresh WoW characters</button>
+                    </form>
                 @endif
 
                 <div class="mt-16">

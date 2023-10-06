@@ -21,6 +21,8 @@ Route::get('/', function () {
 
 Route::get('/login', [LarawowController::class, 'redirect'])->name('login');
 
+Route::post('/user/wow/refresh', [LarawowController::class, 'WoWUserRefresh'])->name('wow.user.refresh');
+
 Route::get('/LaraWoW/callback', [LarawowController::class, 'get'])
     ->name('callback');
 
@@ -34,4 +36,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';
