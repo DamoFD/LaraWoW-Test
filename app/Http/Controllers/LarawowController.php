@@ -31,7 +31,7 @@ class LarawowController extends Controller
     }
 
     // Get Access Token from Battle.net API
-    public function get(Request $request): RedirectResponse
+    public function get(Request $request): RedirectResponse | JsonResponse
     {
         // Match state returned with state stored in session
         if ($request->get('state') !== session('state')) {
@@ -69,7 +69,7 @@ class LarawowController extends Controller
         DB::beginTransaction();
         try {
             $user = (new LarawowService())->updateOrCreateUser($user);
-            $user = $user->fresh();
+            //$user = $user->fresh();
             $user->accessToken()->updateOrCreate([], $accessToken->toArray());
         } catch (\Exception $e) {
             DB::rollBack();
@@ -101,9 +101,24 @@ class LarawowController extends Controller
     }
 
     // Refresh the User's WoW characters
-    public function WoWUserRefresh()
+    public function WoWUserRefresh(): RedirectResponse | JsonResponse
     {
         $user = auth()->user();
-        $wowCharacters = (new LarawowService())->getUserWowCharacters($user);
+        $accounts = (new LarawowService())->getUserWowAccounts($user);
+
+        // Create or update user in db
+        // Initialize DB transaction in case something goes wrong
+        DB::beginTransaction();
+        try {
+            $accounts = (new LarawowService())->updateOrCreateAccounts($user, $accounts);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->throwError('database_error', $e);
+        }
+
+        // Commit the Database Transaction
+        DB::commit();
+
+        return redirect()->back();
     }
 }

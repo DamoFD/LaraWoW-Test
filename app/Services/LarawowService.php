@@ -9,6 +9,8 @@ use App\Types\AccessToken;
 use App\Types\User as UserType;
 use App\Models\User;
 use App\Types\WowAccount;
+use App\Models\Account;
+use App\Models\Character;
 
 class LarawowService
 {
@@ -91,10 +93,51 @@ class LarawowService
         );
     }
 
+    public function updateOrCreateAccounts(User $user, array $accounts): array
+    {
+        $data = [];
+        foreach ($accounts as $account) {
+            $characters = [];
+            $accountModel = Account::updateOrCreate(
+                [
+                    'id' => $account->id,
+                ],
+                [
+                    'user_id' => $user->id
+                ]
+            );
+
+            foreach ($account->characters as $character) {
+                $row = Character::updateOrCreate(
+                    [
+                        'id' => $character->id,
+                    ],
+                    [
+                        'character_link' => $character->character_link,
+                        'protected_character_link' => $character->protected_character_link,
+                        'name' => $character->name,
+                        'level' => $character->level,
+                        'account_id' => $account->id,
+                        'realm_id' => $character->realm->id,
+                        'playable_class_id' => $character->playable_class->id,
+                        'playable_race_id' => $character->playable_race->id,
+                        'gender_id' => $character->gender->id,
+                        'faction_id' => $character->faction->id,
+                    ]
+                );
+
+                $characters[] = $row;
+            }
+            $data[] = $accountModel;
+        }
+        return $data;
+    }
+
     /**
-    * Fetch the user's WoW characters
+    * Fetch the user's WoW accounts
+    * @return WowAccounts[]
     */
-    public function getUserWowCharacters(User $user)
+    public function getUserWowAccounts(User $user): array
     {
         $url = 'https://us.api.blizzard.com/profile/user/wow?namespace=profile-us&locale=en_US';
         $WowAccounts = [];
@@ -109,8 +152,6 @@ class LarawowService
             $WowAccounts[] = new WowAccount($account);
         }
 
-        dd($WowAccounts);
-
-        return new UserType(json_decode($response->body()));
+        return $WowAccounts;
     }
 }

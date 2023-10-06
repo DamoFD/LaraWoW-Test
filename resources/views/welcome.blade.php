@@ -44,6 +44,39 @@
                         @csrf
                         <button type="submit">Refresh WoW characters</button>
                     </form>
+
+                    @foreach (auth()->user()->accounts as $account)
+                        <h1>{{ $account->id }}</h1>
+                        <table>
+                            <tr>
+                                <th>Character</th>
+                                <th>ID</th>
+                                <th>Character Link</th>
+                                <th>Protected Link</th>
+                                <th>Level</th>
+                                <th>Realm ID</th>
+                                <th>Class</th>
+                                <th>Race</th>
+                                <th>Gender</th>
+                                <th>Faction</th>
+                            </tr>
+                            @foreach ($account->characters as $character)
+                                <tr>
+                                    <td>{{ $character->name }}</td>
+                                    <td>{{ $character->id }}</td>
+                                    <td>{{ $character->character_link }}</td>
+                                    <td>{{ $character->protected_character_link }}</td>
+                                    <td>{{ $character->level }}</td>
+                                    <td>{{ $character->realm_id }}</td>
+                                    <td>{{ $character->getClass() }}</td>
+                                    <td>{{ $character->getRace() }}</td>
+                                    <td>{{ $character->getGender() }}</td>
+                                    <td>{{ $character->getFaction() }}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    @endforeach
+
                 @endif
 
                 <div class="mt-16">
